@@ -1,17 +1,28 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import { render } from "react-dom";
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+import { Synopsis } from "./Synopsis";
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+const LazyPlot = React.lazy(() => import("./Plot"));
+
+const Movie = () => {
+  const [showPlot, setShowPlot] = React.useState(false);
+
+  return (
+    <>
+      <h2>Inception</h2>
+      <Synopsis />
+      <button onClick={() => setShowPlot((prevState) => !prevState)}>
+        {showPlot ? "Hide" : "Show full plot.."}
+      </button>
+      {showPlot && (
+        <React.Suspense fallback={<div>Loading</div>}>
+          <LazyPlot />
+        </React.Suspense>
+      )}
+    </>
+  );
+};
+
+const rootElement = document.getElementById("root");
+render(<Movie />, rootElement);
